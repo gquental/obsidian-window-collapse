@@ -1,4 +1,4 @@
-import { App, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
+import { Plugin } from 'obsidian';
 
 export default class WindowCollapse extends Plugin {
 	async onload() {
@@ -27,11 +27,6 @@ export default class WindowCollapse extends Plugin {
 
 		});
 	}
-
-	onunload() {
-		console.log('unloading plugin');
-	}
-
 	toggleCollapseLeft() {
 		document.querySelector('.mod-left .workspace-ribbon-collapse-btn').click();
 	}
