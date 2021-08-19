@@ -1,112 +1,67 @@
 import { App, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
 
-interface MyPluginSettings {
-	mySetting: string;
-}
-
-const DEFAULT_SETTINGS: MyPluginSettings = {
-	mySetting: 'default'
-}
-
-export default class MyPlugin extends Plugin {
-	settings: MyPluginSettings;
-
+export default class WindowCollapse extends Plugin {
 	async onload() {
-		console.log('loading plugin');
-
-		await this.loadSettings();
-
-		this.addRibbonIcon('dice', 'Sample Plugin', () => {
-			new Notice('This is a notice!');
+		this.addCommand({
+			id: 'collapse-left-sidebar',
+			name: 'Toggle Collapse Left Sidebar',
+			callback: () => {
+				this.toggleCollapseLeft();
+			},
 		});
-
-		this.addStatusBarItem().setText('Status Bar Text');
 
 		this.addCommand({
-			id: 'open-sample-modal',
-			name: 'Open Sample Modal',
-			// callback: () => {
-			// 	console.log('Simple Callback');
-			// },
-			checkCallback: (checking: boolean) => {
-				let leaf = this.app.workspace.activeLeaf;
-				if (leaf) {
-					if (!checking) {
-						new SampleModal(this.app).open();
-					}
-					return true;
-				}
-				return false;
-			}
+			id: 'collapse-right-sidebar',
+			name: 'Toggle Collapse Right Sidebar',
+			callback: () => {
+				this.toggleCollapseRight();
+			},
 		});
 
-		this.addSettingTab(new SampleSettingTab(this.app, this));
+		this.addCommand({
+			id: 'collapse-sidebars',
+			name: 'Toggle Collapse Sidebars',
+			callback: () => {
+				this.toggleCollapse()
+			},
 
-		this.registerCodeMirror((cm: CodeMirror.Editor) => {
-			console.log('codemirror', cm);
 		});
-
-		this.registerDomEvent(document, 'click', (evt: MouseEvent) => {
-			console.log('click', evt);
-		});
-
-		this.registerInterval(window.setInterval(() => console.log('setInterval'), 5 * 60 * 1000));
 	}
 
 	onunload() {
 		console.log('unloading plugin');
 	}
 
-	async loadSettings() {
-		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+	toggleCollapseLeft() {
+		document.querySelector('.mod-left .workspace-ribbon-collapse-btn').click();
 	}
 
-	async saveSettings() {
-		await this.saveData(this.settings);
-	}
-}
-
-class SampleModal extends Modal {
-	constructor(app: App) {
-		super(app);
+	toggleCollapseRight() {
+		document.querySelector('.mod-right .workspace-ribbon-collapse-btn').click();
 	}
 
-	onOpen() {
-		let {contentEl} = this;
-		contentEl.setText('Woah!');
-	}
+	toggleCollapse() {
+		let leftIsCollapsed = (document.querySelector('.workspace-ribbon.mod-left').classList.contains('is-collapsed')) ? 1 : 0;
+		let rightIsCollapsed = (document.querySelector('.workspace-ribbon.mod-right').classList.contains('is-collapsed')) ? 1 : 0;
+		let total = leftIsCollapsed + rightIsCollapsed;
 
-	onClose() {
-		let {contentEl} = this;
-		contentEl.empty();
-	}
-}
+		if (total != 1) {
+			this.toggleCollapseRight();
+			this.toggleCollapseLeft();
 
-class SampleSettingTab extends PluginSettingTab {
-	plugin: MyPlugin;
+			return
+		}
 
-	constructor(app: App, plugin: MyPlugin) {
-		super(app, plugin);
-		this.plugin = plugin;
-	}
+		if (leftIsCollapsed) {
+			this.toggleCollapseRight();
 
-	display(): void {
-		let {containerEl} = this;
+			return;
+		}
 
-		containerEl.empty();
+		if (rightIsCollapsed) {
+			this.toggleCollapseLeft();
 
-		containerEl.createEl('h2', {text: 'Settings for my awesome plugin.'});
-
-		new Setting(containerEl)
-			.setName('Setting #1')
-			.setDesc('It\'s a secret')
-			.addText(text => text
-				.setPlaceholder('Enter your secret')
-				.setValue('')
-				.onChange(async (value) => {
-					console.log('Secret: ' + value);
-					this.plugin.settings.mySetting = value;
-					await this.plugin.saveSettings();
-				}));
+			return;
+		}
 	}
 }
