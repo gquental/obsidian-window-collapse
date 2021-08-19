@@ -3,7 +3,7 @@
 	"name": "Window Collapse",
 	"version": "1.0.0",
 	"minAppVersion": "0.9.7",
-	"description": "Plugin intended to make easier to collapse window sidebars through hotkeys.",
+	"description": "This plugins provides an easy way to collapse the sidebars without going fullscreen.",
 	"author": "Guilherme Quental",
 	"authorUrl": "https://obsidian.md/about",
 	"isDesktopOnly": false
