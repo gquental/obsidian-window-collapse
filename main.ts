@@ -28,16 +28,20 @@ export default class WindowCollapse extends Plugin {
 		});
 	}
 	toggleCollapseLeft() {
-		document.querySelector('.mod-left .workspace-ribbon-collapse-btn').click();
+		const leftSplit = this.app.workspace.leftSplit;
+
+		leftSplit.collapsed ? leftSplit.expand() : leftSplit.collapse();
 	}
 
 	toggleCollapseRight() {
-		document.querySelector('.mod-right .workspace-ribbon-collapse-btn').click();
+		const rightSplit = this.app.workspace.rightSplit;
+
+		rightSplit.collapsed ? rightSplit.expand() : rightSplit.collapse();
 	}
 
 	toggleCollapse() {
-		let leftIsCollapsed = (document.querySelector('.workspace-ribbon.mod-left').classList.contains('is-collapsed')) ? 1 : 0;
-		let rightIsCollapsed = (document.querySelector('.workspace-ribbon.mod-right').classList.contains('is-collapsed')) ? 1 : 0;
+		const leftIsCollapsed = this.app.workspace.leftSplit.collapsed ? 1 : 0;
+		const rightIsCollapsed = this.app.workspace.rightSplit.collapsed ? 1 : 0;
 		let total = leftIsCollapsed + rightIsCollapsed;
 
 		if (total != 1) {
